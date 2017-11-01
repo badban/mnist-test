@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/../embedding/.idea/embedding.iml" filepath="$PROJECT_DIR$/../embedding/.idea/embedding.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../mnist-test/.idea/mnist-test.iml" filepath="$PROJECT_DIR$/../mnist-test/.idea/mnist-test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../weibodata/.idea/weibodata.iml" filepath="$PROJECT_DIR$/../weibodata/.idea/weibodata.iml" />
+    </modules>
+  </component>
+</project>
