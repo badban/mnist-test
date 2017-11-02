@@ -115,6 +115,7 @@ def graph():
     # W_fc2 = weight_variable([1024, 10])
     # b_fc2 = bias_variable([10])
     #
+
     x = tf.placeholder("float", [None, 784])
     y = tf.placeholder("float", [None, 10])
     x_image = tf.reshape(x,[-1,28,28,1])
@@ -141,24 +142,54 @@ def graph():
 
     with tf.name_scope("softmax"):
         W = weight_variable([1024,10])
+        tf.summary.histogram('softmax_w', W)
         b = bias_variable([10])
         y_ = tf.nn.softmax(tf.matmul(output_dropout,W)+b)
+
+        train(y,y_,x,keep_prob)
+def train(y,y_,x,keep_prob,Train=False):
+    Train=False
 
     cross_entropy = -tf.reduce_mean(y*tf.log(y_))
     train_step = tf.train.GradientDescentOptimizer(0.01).minimize(cross_entropy)
     correct_prediction = tf.equal(tf.argmax(y_,1),tf.argmax(y,1))
     accuracy = tf.reduce_mean(tf.cast(correct_prediction,"float"))
-    sess = tf.InteractiveSession()
+
+    sess = tf.InteractiveSession(config=tf.ConfigProto(log_device_placement=True))
     sess.run(tf.initialize_all_variables())
-    for i in range(20000):
-        batch = mnist.train.next_batch(50)
-        train_accuary = accuracy.eval(feed_dict={x:batch[0],y:batch[1],keep_prob:1.0})
-        if i %100 ==0:
-            print("step %d, training accracy %g"%(i,train_accuary))
-        train_step.run(feed_dict={x: batch[0], y: batch[1], keep_prob: 0.5})
-    print("test accuracy %g" % accuracy.eval(
-                feed_dict={x: mnist.test.images, y: mnist.test.labels, keep_prob: 1.0}))
-    sess.close()
+
+    # 最大训练精度
+    max_acc=0
+    # 训练阶段
+    if Train:
+
+
+        # 合并到Summary中
+        merged = tf.summary.merge_all()
+        # 选定可视化存储目录
+        writer = tf.summary.FileWriter("./log/mnist-log", sess.graph)
+
+        # 保留精度最大的三代
+        saver = tf.train.Saver(max_to_keep=3)
+        for i in range(20000):
+            batch = mnist.train.next_batch(50)
+            train_accuary = accuracy.eval(feed_dict={x:batch[0],y:batch[1],keep_prob:1.0})
+            if i %100 ==0:
+                print("step %d, training accracy %g"%(i,train_accuary))
+                result = sess.run(merged)  # merged也是需要run的
+                writer.add_summary(result, i)
+            if train_accuary > max_acc:
+                max_acc=train_accuary
+                saver.save(sess=sess,save_path="./model/save1.ckpt")
+            train_step.run(feed_dict={x: batch[0], y: batch[1], keep_prob: 0.5})
+
+
+        print("test accuracy %g" % accuracy.eval(feed_dict={x: mnist.test.images, y: mnist.test.labels, keep_prob: 1.0}))
+    #验证阶段
+    else:
+        saver=tf.train.Saver()
+        saver.restore(sess,"./model/save1.ckpt")
+        print("from trained model test accracy %g" % accuracy.eval(feed_dict={x: mnist.test.images, y: mnist.test.labels, keep_prob: 1.0}))
 
     # y_conv = tf.nn.softmax(tf.matmul(h_fc1_drop, W_fc2) + b_fc2)
     # cross_entropy = -tf.reduce_sum(y_ * tf.log(y_conv))
