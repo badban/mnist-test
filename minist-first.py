@@ -148,7 +148,7 @@ def graph():
 
         train(y,y_,x,keep_prob)
 def train(y,y_,x,keep_prob,Train=False):
-    Train=False
+    Train=True
 
     cross_entropy = -tf.reduce_mean(y*tf.log(y_))
     train_step = tf.train.GradientDescentOptimizer(0.01).minimize(cross_entropy)
@@ -174,21 +174,28 @@ def train(y,y_,x,keep_prob,Train=False):
         for i in range(20000):
             batch = mnist.train.next_batch(50)
             train_accuary = accuracy.eval(feed_dict={x:batch[0],y:batch[1],keep_prob:1.0})
+            file=open("./acc.txt","a")
             if i %100 ==0:
                 print("step %d, training accracy %g"%(i,train_accuary))
                 result = sess.run(merged)  # merged也是需要run的
                 writer.add_summary(result, i)
             if train_accuary > max_acc:
                 max_acc=train_accuary
-                saver.save(sess=sess,save_path="./model/save1.ckpt")
+                print("train_accuary:%d"%train_accuary)
+                print("max_acc:%d"%max_acc)
+
+                saver.save(sess=sess,save_path="./model/save.ckpt",global_step=i)
+            file.write(str(train_accuary) + str(" ") + str(max_acc))
             train_step.run(feed_dict={x: batch[0], y: batch[1], keep_prob: 0.5})
+
+            file.close()
 
 
         print("test accuracy %g" % accuracy.eval(feed_dict={x: mnist.test.images, y: mnist.test.labels, keep_prob: 1.0}))
     #验证阶段
     else:
         saver=tf.train.Saver()
-        saver.restore(sess,"./model/save1.ckpt")
+        saver.restore(sess,"./model/save.ckpt")
         print("from trained model test accracy %g" % accuracy.eval(feed_dict={x: mnist.test.images, y: mnist.test.labels, keep_prob: 1.0}))
 
     # y_conv = tf.nn.softmax(tf.matmul(h_fc1_drop, W_fc2) + b_fc2)

@@ -69,25 +69,46 @@
     # Raises ValueError(... conv1/weights already exists ...)
 
 
-import numpy as np
-def erase_data(X, percent=100):
-    """
-    This is used for randomly earse some feature of X,
-    we want to
+# import numpy as np
+# def erase_data(X, percent=100):
+#     """
+#     This is used for randomly earse some feature of X,
+#     we want to
+#
+#     :param X: input feature matrix
+#     :param percent: percent of erased feature
+#     :return: erased X
+#     """
+#     X=np.array([[1,2,3],[4,5,6]])
+#     for _ in range(X.shape[0]):
+#         perm = np.random.permutation(X.shape[1])
+#         print(perm)
+#         index = perm[:int(X.shape[1] * percent / 100)]
+#         # ind = np.random.choice(X.shape[1], int(X.shape[1] * percent / 100))
+#         X[_, index] = 0
+#     print(X)
+# if __name__ == "__main__":
+#     X=[[1,2,3],[4,5,6]]
+#
+#     erase_data(X)
+# import tensorflow as tf
+# img = tf.Variable(tf.random_normal([2, 3]))
+#
+# n_prev_weight = img.get_shape().as_list()[1]
+# print(n_prev_weight)
+# axis = list(range(len(img.get_shape()) - 1))
+# print(len(img.get_shape()))
+# print(axis)
+# mean, variance = tf.nn.moments(img, axis)
 
-    :param X: input feature matrix
-    :param percent: percent of erased feature
-    :return: erased X
-    """
-    X=np.array([[1,2,3],[4,5,6]])
-    for _ in range(X.shape[0]):
-        perm = np.random.permutation(X.shape[1])
-        print(perm)
-        index = perm[:int(X.shape[1] * percent / 100)]
-        # ind = np.random.choice(X.shape[1], int(X.shape[1] * percent / 100))
-        X[_, index] = 0
-    print(X)
-if __name__ == "__main__":
-    X=[[1,2,3],[4,5,6]]
+# import tensorflow as tf
+# import numpy as np
+# a=np.random.randint(0,10,size=(2,3,4))
+# print(a)
+# print(a[:,-1,:])
 
-    erase_data(X)
+file=open("./test.txt","a")
+for i in range(10):
+    file.write(str(i)+str()+str(i))
+    file.write("\n")
+file.close()
